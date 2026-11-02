@@ -10,7 +10,7 @@ using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(60) };
 http.DefaultRequestHeaders.Add("x-api-key", apiKey);
 
 var query =
-    "query=" + Uri.EscapeDataString("ryzen 5 9600x");
+    "query=" + Uri.EscapeDataString("logitech keyboard");
 
 var response = await http.GetAsync("https://api.piloterr.com/v2/newegg/search?" + query);
 var body = await response.Content.ReadAsStringAsync();

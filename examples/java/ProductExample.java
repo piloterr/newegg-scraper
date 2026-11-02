@@ -14,7 +14,7 @@ public class ProductExample {
     }
 
     public static void main(String[] args) throws Exception {
-        String query = "query=" + enc("N82E16819113844");
+        String query = "query=" + enc("N82E16823126188");
 
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create("https://api.piloterr.com/v2/newegg/product?" + query))

@@ -2,7 +2,7 @@
 // Usage: PILOTERR_API_KEY=your-key node search.mjs
 
 const params = new URLSearchParams({
-  "query": "ryzen 5 9600x",
+  "query": "logitech keyboard",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/newegg/search?${params}`, {

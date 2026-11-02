@@ -3,7 +3,7 @@
 // Usage: PILOTERR_API_KEY=your-key php product.php
 
 $params = http_build_query([
-    'query' => 'N82E16819113844',
+    'query' => 'N82E16823126188',
 ]);
 
 $ch = curl_init('https://api.piloterr.com/v2/newegg/product?' . $params);

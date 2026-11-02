@@ -8,15 +8,15 @@
 
 The **Piloterr Newegg Scraper API** lets you extract public data from Newegg as **clean, structured JSON** — no proxies, headless browsers or HTML parsing to maintain. Endpoints available in production:
 
-- **Newegg Product API** — Newegg Product API: fetch full product page data from an item number, product ID or URL.
-- **Newegg Search API** — Newegg Search API: search product listings by keyword or URL on Newegg.
+- **Newegg Product API** — Read a Newegg product from an item number, catalog id, or URL.
+- **Newegg Search API** — Search Newegg by keyword or search URL.
 
 Use it for price monitoring, assortment tracking, competitor analysis, product research or catalog enrichment.
 
 | Endpoint | Path | Credits | What you get |
 |---|---|---|---|
-| [Newegg Product API](#newegg-product-api) | `/v2/newegg/product` | 2 | Newegg Product API |
-| [Newegg Search API](#newegg-search-api) | `/v2/newegg/search` | 2 | Newegg Search API |
+| [Newegg Product API](#newegg-product-api) | `/v2/newegg/product` | 2 | Read a Newegg product from an item number, catalog id, or URL. Returns price, specs, images, and seller. |
+| [Newegg Search API](#newegg-search-api) | `/v2/newegg/search` | 2 | Search Newegg by keyword or search URL. Returns item numbers, dollar prices, stock, and pagination. |
 
 ## Table of contents
 
@@ -46,7 +46,7 @@ pip install requests        # Python
 
 ## Newegg Product API
 
-Newegg Product API: fetch full product page data from an item number, product ID or URL. Returns pricing, specs, images, ratings, seller info and promo codes via browser rendering.
+Read a Newegg product from an item number, catalog id, or URL. Returns price, specs, images, and seller.
 
 `GET | POST https://api.piloterr.com/v2/newegg/product` · **2 credits per request** · [Full reference](https://app.piloterr.com/openapi)
 
@@ -54,8 +54,8 @@ Newegg Product API: fetch full product page data from an item number, product ID
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `query` | string | ✅ | Newegg item number, product ID, or full product URL. |
-| `return_page_source` | boolean | — | When `true`, return the raw HTML page source as `{"result": "..."}` instead of structured JSON. Defaults to `false`. |
+| `query` | string | ✅ | Item number, catalog id, or product URL. |
+| `return_page_source` | boolean | — | When true, return the raw HTML. The string false stays false. |
 
 ### Python example
 
@@ -68,7 +68,7 @@ response = requests.get(
     "https://api.piloterr.com/v2/newegg/product",
     headers={"x-api-key": os.environ["PILOTERR_API_KEY"]},
     params={
-        "query": "N82E16819113844",
+        "query": "N82E16823126188",
     },
     timeout=60,
 )
@@ -82,36 +82,19 @@ print(json.dumps(data, indent=2, ensure_ascii=False)[:2000])
 
 ```typescript
 type NeweggProduct = {
-  upc?: string;
   url?: string;
   brand?: string;
-  model?: string;
   price?: number;
   title?: string;
-  images?: string[];
-  rating?: number;
-  savings?: number;
   currency?: string;
   in_stock?: boolean;
-  image_url?: string;
-  seller_id?: unknown;
   product_id?: string;
-  promo_code?: string;
-  breadcrumbs?: string[];
-  description?: unknown;
   item_number?: string;
-  seller_name?: string;
-  subcategory?: string;
-  availability?: string;
-  review_count?: number;
-  bullet_points?: string[];
-  original_price?: number;
-  promotion_text?: string;
-  [key: string]: unknown;
+  price_display?: string;
 };
 
 const params = new URLSearchParams({
-  "query": "N82E16819113844",
+  "query": "N82E16823126188",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/newegg/product?${params}`, {
@@ -132,7 +115,7 @@ POST https://api.piloterr.com/v2/newegg/product
 x-api-key: YOUR_API_KEY
 Content-Type: application/json
 
-{"query": "N82E16819113844"}
+{"query": "N82E16823126188"}
 ```
 </details>
 
@@ -142,40 +125,15 @@ Example response from the API reference, abridged — real values depend on the 
 
 ```json
 {
-  "upc": "730143315609",
-  "url": "https://www.newegg.com/amd-ryzen-5-9000-series-ryzen-5-9600x-granite-ridge-socket-am5-desktop-cpu-processor/p/N82E16819113844",
-  "brand": "AMD",
-  "model": "100-100001405WOF",
-  "price": 189.99,
-  "title": "AMD Ryzen 5 9600X - Ryzen 5 9000 Series Granite Ridge (Zen 5) 6-Core 3.9 GHz - Socket AM5 65W - Radeon Graphics Processor - 100-100001405WOF",
-  "images": [
-    "https://c1.neweggimages.com/productimage/nb640/19-113-844-05.jpg",
-    "https://c1.neweggimages.com/productimage/nb640/19-113-844-08.jpg"
-  ],
-  "rating": 4.8,
-  "savings": 89.01,
+  "url": "https://www.newegg.com/logitech-mk320-920-002836-usb-rf-wireless/p/N82E16823126188",
+  "brand": "Logitech",
+  "price": 32.99,
+  "title": "Logitech MK320 Wireless Desktop Keyboard and Mouse Combo",
   "currency": "USD",
   "in_stock": true,
-  "image_url": "https://c1.neweggimages.com/productimage/nb640/19-113-844-05.jpg",
-  "seller_id": null,
-  "product_id": "N82E16819113844",
-  "promo_code": "SSF69677",
-  "breadcrumbs": [
-    "Components & Storage",
-    "CPU / Processor"
-  ],
-  "description": null,
-  "item_number": "19-113-844",
-  "seller_name": "example",
-  "subcategory": "Desktop CPU Processor",
-  "availability": "in_stock",
-  "review_count": 484,
-  "bullet_points": [
-    "Experience exceptional gaming performance with smooth 100+ FPS in the most popular games.",
-    "This processor features 6 cores and 12 threads, based on AMD's \"Zen 5\" architecture."
-  ],
-  "original_price": 279,
-  "promotion_text": "+ $10 off w/ promo code SSF69677, limited offer"
+  "product_id": "N82E16823126188",
+  "item_number": "9SIA1CZEDK9378",
+  "price_display": "$32.99"
 }
 ```
 
@@ -183,35 +141,19 @@ Example response from the API reference, abridged — real values depend on the 
 
 | Field | Type | Description |
 |---|---|---|
-| `upc` | string |  |
 | `url` | string |  |
 | `brand` | string |  |
-| `model` | string |  |
 | `price` | number |  |
 | `title` | string |  |
-| `images` | string[] |  |
-| `rating` | number |  |
-| `savings` | number |  |
 | `currency` | string |  |
 | `in_stock` | boolean |  |
-| `image_url` | string |  |
-| `seller_id` | object |  |
 | `product_id` | string |  |
-| `promo_code` | string |  |
-| `breadcrumbs` | string[] |  |
-| `description` | object |  |
 | `item_number` | string |  |
-| `seller_name` | string |  |
-| `subcategory` | string |  |
-| `availability` | string |  |
-| `review_count` | integer |  |
-| `bullet_points` | string[] |  |
-| `original_price` | integer |  |
-| `promotion_text` | string |  |
+| `price_display` | string |  |
 
 ## Newegg Search API
 
-Newegg Search API: search product listings by keyword or URL on Newegg. Returns prices, ratings, stock flags, marketplace/combo signals and pagination via browser rendering.
+Search Newegg by keyword or search URL. Returns item numbers, dollar prices, stock, and pagination.
 
 `GET | POST https://api.piloterr.com/v2/newegg/search` · **2 credits per request** · [Full reference](https://app.piloterr.com/openapi)
 
@@ -219,9 +161,9 @@ Newegg Search API: search product listings by keyword or URL on Newegg. Returns 
 
 | Parameter | Type | Required | Description |
 |---|---|---|---|
-| `query` | string | ✅ | Search keyword or full Newegg search URL. |
-| `page` | number | — | 1-based page number (default: 1). |
-| `return_page_source` | boolean | — | When `true`, return the raw HTML page source as `{"result": "..."}` instead of structured JSON. Defaults to `false`. |
+| `query` | string | ✅ | Keyword or a newegg.com search URL. |
+| `page` | number | — | Page number, starting at 1. Example: 2. |
+| `return_page_source` | boolean | — | When true, return the raw HTML. The string false stays false. |
 
 ### Python example
 
@@ -234,7 +176,7 @@ response = requests.get(
     "https://api.piloterr.com/v2/newegg/search",
     headers={"x-api-key": os.environ["PILOTERR_API_KEY"]},
     params={
-        "query": "ryzen 5 9600x",
+        "query": "logitech keyboard",
     },
     timeout=60,
 )
@@ -251,25 +193,18 @@ type NeweggSearch = {
   results?: {
     url?: string;
     brand?: string;
-    model?: string;
     price?: number;
     title?: string;
     rating?: number;
     currency?: string;
     in_stock?: boolean;
-    is_combo?: boolean;
-    image_url?: string;
     product_id?: string;
     item_number?: string;
-    availability?: string;
     review_count?: number;
-    is_marketplace?: boolean;
-    is_refurbished?: boolean;
-    original_price?: number;
-    promotion_text?: string;
+    price_display?: string;
   }[];
   pagination?: {
-    next?: unknown;
+    next?: string;
     page?: number;
     keyword?: string;
     per_page?: number;
@@ -279,7 +214,7 @@ type NeweggSearch = {
 };
 
 const params = new URLSearchParams({
-  "query": "ryzen 5 9600x",
+  "query": "logitech keyboard",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/newegg/search?${params}`, {
@@ -300,7 +235,7 @@ POST https://api.piloterr.com/v2/newegg/search
 x-api-key: YOUR_API_KEY
 Content-Type: application/json
 
-{"query": "ryzen 5 9600x"}
+{"query": "logitech keyboard"}
 ```
 </details>
 
@@ -312,33 +247,26 @@ Example response from the API reference, abridged — real values depend on the 
 {
   "results": [
     {
-      "url": "https://www.newegg.com/amd-ryzen-5-9000-series-ryzen-5-9600x-granite-ridge-socket-am5-desktop-cpu-processor/p/N82E16819113844",
-      "brand": "AMD",
-      "model": "100-100001405WOF",
-      "price": 189.99,
-      "title": "AMD Ryzen 5 9600X - Ryzen 5 9000 Series Granite Ridge (Zen 5) 6-Core 3.9 GHz - Socket AM5 65W - Radeon Graphics Processor - 100-100001405WOF",
-      "rating": 4.8,
+      "url": "https://www.newegg.com/logitech-mk320-920-002836-usb-rf-wireless/p/N82E16823126188",
+      "brand": "Logitech",
+      "price": 36.99,
+      "title": "Logitech MK320 Wireless Desktop Keyboard and Mouse Combo",
+      "rating": 3.7,
       "currency": "USD",
       "in_stock": true,
-      "is_combo": false,
-      "image_url": "https://c1.neweggimages.com/ProductImageCompressAll300/19-113-844-05.jpg",
-      "product_id": "N82E16819113844",
-      "item_number": "19-113-844",
-      "availability": "in_stock",
-      "review_count": 484,
-      "is_marketplace": false,
-      "is_refurbished": false,
-      "original_price": 279,
-      "promotion_text": "+ $10 off w/ promo code SSF69677, limited offer"
+      "product_id": "N82E16823126188",
+      "item_number": "23-126-188",
+      "review_count": 289,
+      "price_display": "$36.99"
     }
   ],
   "pagination": {
-    "next": null,
+    "next": "https://www.newegg.com/p/pl?d=logitech+keyboard&page=2",
     "page": 1,
-    "keyword": "ryzen 5 9600x",
-    "per_page": 20,
-    "total_pages": 1,
-    "total_results": 8
+    "keyword": "logitech keyboard",
+    "per_page": 44,
+    "total_pages": 20,
+    "total_results": 1529
   }
 }
 ```
@@ -350,28 +278,22 @@ Example response from the API reference, abridged — real values depend on the 
 | `results[]` | object[] |  |
 | `results[].url` | string |  |
 | `results[].brand` | string |  |
-| `results[].model` | string |  |
 | `results[].price` | number |  |
 | `results[].title` | string |  |
 | `results[].rating` | number |  |
 | `results[].currency` | string |  |
 | `results[].in_stock` | boolean |  |
-| `results[].is_combo` | boolean |  |
-| `results[].image_url` | string |  |
 | `results[].product_id` | string |  |
 | `results[].item_number` | string |  |
-| `results[].availability` | string |  |
 | `results[].review_count` | integer |  |
-| `results[].is_marketplace` | boolean |  |
-| `results[].is_refurbished` | boolean |  |
-| `results[].original_price` | integer |  |
-| `results[].promotion_text` | string |  |
+| `results[].price_display` | string |  |
 | `pagination` | object |  |
-| `pagination.next` | object |  |
+| `pagination.next` | string |  |
 | `pagination.page` | integer |  |
 | `pagination.keyword` | string |  |
 | `pagination.per_page` | integer |  |
 | `pagination.total_pages` | integer |  |
+| `pagination.total_results` | integer |  |
 
 ## Code examples in other languages
 
@@ -419,7 +341,7 @@ Credits per call: `/v2/newegg/product` **2**, `/v2/newegg/search` **2**. See the
 
 ### What data does the Newegg API return?
 
-Each endpoint returns structured JSON: **Newegg Product** — `upc`, `url`, `brand`, `model`, `price`, `title`; **Newegg Search** — `results[]`, `results[].url`, `results[].brand`, `results[].model`, `results[].price`, `results[].title`.
+Each endpoint returns structured JSON: **Newegg Product** — `url`, `brand`, `price`, `title`, `currency`, `in_stock`; **Newegg Search** — `results[]`, `results[].url`, `results[].brand`, `results[].price`, `results[].title`, `results[].rating`.
 
 ### How do I paginate Newegg results?
 

@@ -2,7 +2,7 @@
 // Usage: PILOTERR_API_KEY=your-key node product.mjs
 
 const params = new URLSearchParams({
-  "query": "N82E16819113844",
+  "query": "N82E16823126188",
 });
 
 const response = await fetch(`https://api.piloterr.com/v2/newegg/product?${params}`, {

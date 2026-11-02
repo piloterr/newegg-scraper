@@ -5,7 +5,7 @@ require "net/http"
 require "uri"
 
 uri = URI("https://api.piloterr.com/v2/newegg/product")
-uri.query = URI.encode_www_form('query' => 'N82E16819113844')
+uri.query = URI.encode_www_form('query' => 'N82E16823126188')
 
 request = Net::HTTP::Get.new(uri)
 request["x-api-key"] = ENV.fetch("PILOTERR_API_KEY")

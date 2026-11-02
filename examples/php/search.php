@@ -3,7 +3,7 @@
 // Usage: PILOTERR_API_KEY=your-key php search.php
 
 $params = http_build_query([
-    'query' => 'ryzen 5 9600x',
+    'query' => 'logitech keyboard',
 ]);
 
 $ch = curl_init('https://api.piloterr.com/v2/newegg/search?' . $params);

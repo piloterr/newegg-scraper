@@ -15,7 +15,7 @@ import (
 
 func main() {
 	params := url.Values{}
-	params.Set("query", "ryzen 5 9600x")
+	params.Set("query", "logitech keyboard")
 
 	req, _ := http.NewRequest("GET", "https://api.piloterr.com/v2/newegg/search?"+params.Encode(), nil)
 	req.Header.Set("x-api-key", os.Getenv("PILOTERR_API_KEY"))

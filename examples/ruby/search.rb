@@ -5,7 +5,7 @@ require "net/http"
 require "uri"
 
 uri = URI("https://api.piloterr.com/v2/newegg/search")
-uri.query = URI.encode_www_form('query' => 'ryzen 5 9600x')
+uri.query = URI.encode_www_form('query' => 'logitech keyboard')
 
 request = Net::HTTP::Get.new(uri)
 request["x-api-key"] = ENV.fetch("PILOTERR_API_KEY")
